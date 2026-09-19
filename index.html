@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Pomodoro Timer – Free Online Focus Timer</title>
+    <meta name="title" content="Pomodoro Timer – Free Online Focus Timer" />
+    <meta name="description" content="Free online Pomodoro Timer to improve focus and productivity. Customize focus sessions, breaks, daily goals, tasks, sounds and notifications." />
+    <meta name="keywords" content="pomodoro timer, focus timer, productivity tool, pomodoro technique, time management, study timer, work timer" />
+    <meta name="author" content="Shoaib Arif" />
+    <meta name="creator" content="Shoaib Arif" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://pomodorotimer.app" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pomodorotimer.app/" />
+    <meta property="og:title" content="Pomodoro Timer – Free Online Focus Timer" />
+    <meta property="og:description" content="Free online Pomodoro Timer to improve focus and productivity. Customize focus sessions, breaks, daily goals, tasks, sounds and notifications." />
+    <meta property="og:image" content="https://pomodorotimer.app/favicon.svg" />
+    <meta property="og:site_name" content="Pomodoro Timer" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://pomodorotimer.app/" />
+    <meta property="twitter:title" content="Pomodoro Timer – Free Online Focus Timer" />
+    <meta property="twitter:description" content="Free online Pomodoro Timer to improve focus and productivity. Customize focus sessions, breaks, daily goals, tasks, sounds and notifications." />
+    <meta property="twitter:image" content="https://pomodorotimer.app/favicon.svg" />
+    <meta name="twitter:creator" content="@shoaibmarif" />
+
+    <!-- PWA & Mobile Web Capabilities -->
+    <meta name="theme-color" content="#0F172A" id="theme-color-meta" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Pomodoro" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <!-- Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <!-- JSON-LD Structured Data for Rich Search Results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://pomodorotimer.app/#webapp",
+          "name": "Pomodoro Timer",
+          "url": "https://pomodorotimer.app",
+          "applicationCategory": "ProductivityApplication",
+          "operatingSystem": "All",
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "description": "Free online Pomodoro Timer to improve focus and productivity. Customize focus sessions, breaks, daily goals, tasks, sounds and notifications.",
+          "author": {
+            "@type": "Person",
+            "name": "Shoaib Arif",
+            "url": "https://github.com/shoaibmarif",
+            "sameAs": [
+              "https://github.com/shoaibmarif",
+              "https://www.linkedin.com/in/shoaibmarif/"
+            ]
+          },
+          "creator": {
+            "@type": "Person",
+            "name": "Shoaib Arif",
+            "url": "https://github.com/shoaibmarif",
+            "sameAs": [
+              "https://github.com/shoaibmarif",
+              "https://www.linkedin.com/in/shoaibmarif/"
+            ]
+          },
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://pomodorotimer.app/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is the Pomodoro Technique?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Pomodoro Technique is a time management method developed by Francesco Cirillo in the late 1980s. It uses a timer to break work into intervals, traditionally 25 minutes in length, separated by short 5-minute breaks, and a longer 15-minute break after four consecutive cycles."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does this Pomodoro Timer prevent timer drift?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Unlike basic timers that drift when background browser tabs throttle setInterval, this Pomodoro Timer calculates exact remaining time using high-precision timestamp deltas against the system clock, ensuring precision even when switching tabs or running on low-power mode."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is my data stored on a server?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. The application is completely local-first and private. All your custom timer durations, task lists, statistics, streaks, and preferences are stored securely in your browser's LocalStorage with zero tracking or backend data transmission."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Who developed this Pomodoro Timer?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "This Pomodoro Timer was designed and developed by Shoaib Arif (https://github.com/shoaibmarif) as a high-performance open-source productivity application."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
+    <!-- Theme Initialization Script to prevent flash of unstyled content -->
+    <script>
+      (function() {
+        try {
+          const stored = localStorage.getItem('pomodoro_theme');
+          const isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches) || stored === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-surface-50 text-slate-900 dark:bg-surface-950 dark:text-slate-100 min-h-screen font-sans antialiased selection:bg-rose-500/20 selection:text-rose-500">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
