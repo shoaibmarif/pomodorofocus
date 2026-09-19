@@ -2,9 +2,10 @@ import React from 'react';
 
 interface FooterProps {
   onOpenPrivacy: () => void;
+  onOpenSitemap: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenPrivacy }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenPrivacy, onOpenSitemap }) => {
   return (
     <footer className="w-full max-w-4xl mx-auto px-4 py-8 mt-12 border-t border-slate-200/60 dark:border-surface-800/80 text-xs text-slate-500 dark:text-slate-400">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -21,14 +22,22 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPrivacy }) => {
           </a>
         </div>
 
-        {/* Social Links & Privacy Policy */}
-        <div className="flex items-center gap-5">
+        {/* Social Links, Privacy Policy & Sitemap */}
+        <div className="flex items-center gap-4 sm:gap-5 flex-wrap justify-center">
           <button
             type="button"
             onClick={onOpenPrivacy}
             className="hover:text-slate-900 dark:hover:text-white transition-colors underline-offset-4 hover:underline"
           >
             Privacy Policy
+          </button>
+
+          <button
+            type="button"
+            onClick={onOpenSitemap}
+            className="hover:text-slate-900 dark:hover:text-white transition-colors underline-offset-4 hover:underline"
+          >
+            Sitemap
           </button>
 
           <a

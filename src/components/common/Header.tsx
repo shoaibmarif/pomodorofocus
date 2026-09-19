@@ -10,6 +10,7 @@ interface HeaderProps {
   onSetTheme: (theme: ThemeMode) => void;
   onOpenSettings: () => void;
   onOpenShortcuts: () => void;
+  onNavigateHome?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,11 +20,21 @@ export const Header: React.FC<HeaderProps> = ({
   onSetTheme,
   onOpenSettings,
   onOpenShortcuts,
+  onNavigateHome,
 }) => {
   return (
     <header className="w-full max-w-4xl mx-auto px-4 py-4 sm:py-6 flex items-center justify-between">
       {/* Brand logo & title */}
-      <div className="flex items-center gap-2.5 cursor-pointer select-none">
+      <div
+        onClick={onNavigateHome}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') onNavigateHome?.();
+        }}
+        className="flex items-center gap-2.5 cursor-pointer select-none focus:outline-none rounded-2xl p-1"
+        title="Return to Pomodoro Timer"
+      >
         <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center shadow-md shadow-rose-500/20">
           <span className="text-lg">🍅</span>
         </div>

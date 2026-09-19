@@ -65,7 +65,7 @@ export const FaqAccordion: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 focus:outline-none focus:ring-2 focus:ring-focus/50 rounded-2xl"
+                className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 focus:outline-none focus:ring-0 rounded-2xl"
                 aria-expanded={isOpen}
               >
                 <span className="font-semibold text-sm sm:text-base text-slate-900 dark:text-white">
@@ -73,7 +73,7 @@ export const FaqAccordion: React.FC = () => {
                 </span>
                 <ChevronDown
                   className={`w-4 h-4 text-slate-400 dark:text-slate-500 transition-transform duration-200 flex-shrink-0 ${
-                    isOpen ? 'rotate-180 text-focus' : ''
+                    isOpen ? 'rotate-180' : ''
                   }`}
                 />
               </button>

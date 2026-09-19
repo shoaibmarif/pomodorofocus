@@ -1,15 +1,17 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/common/Header';
 import { Navigation, MainTabType } from './components/common/Navigation';
 import { Footer } from './components/common/Footer';
 import { ShortcutsModal } from './components/common/ShortcutsModal';
-import { PrivacyModal } from './components/common/PrivacyModal';
 import { TimerDisplay } from './components/timer/TimerDisplay';
 import { TaskList } from './components/tasks/TaskList';
 import { Statistics } from './components/stats/Statistics';
 import { SettingsModal } from './components/settings/SettingsModal';
 import { GuideSection } from './components/seo/GuideSection';
 import { FaqAccordion } from './components/seo/FaqAccordion';
+
+import { PrivacyPage } from './pages/PrivacyPage';
+import { SitemapPage } from './pages/SitemapPage';
 
 import { useTheme } from './hooks/useTheme';
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -34,6 +36,17 @@ import {
   STORAGE_KEYS,
 } from './constants/defaults';
 import { getLocalDateString } from './utils/time';
+
+export type AppRoute = 'home' | 'privacy' | 'sitemap';
+
+function getInitialRoute(): AppRoute {
+  if (typeof window === 'undefined') return 'home';
+  const path = window.location.pathname.replace(/\/$/, '').toLowerCase();
+  const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
+  if (path === '/privacy' || hash === 'privacy') return 'privacy';
+  if (path === '/sitemap' || hash === 'sitemap') return 'sitemap';
+  return 'home';
+}
 
 export function App() {
   const [theme, setTheme] = useTheme();
@@ -66,11 +79,35 @@ export function App() {
   // Stats
   const [stats, setStats] = useLocalStorage<UserStats>(STORAGE_KEYS.STATS, DEFAULT_STATS);
 
-  // UI Navigation & Modals
+  // Routing and Navigation
+  const [currentRoute, setCurrentRoute] = useState<AppRoute>(getInitialRoute);
   const [currentTab, setCurrentTab] = useState<MainTabType>('timer');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
-  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+
+  const navigateTo = useCallback((route: AppRoute) => {
+    setCurrentRoute(route);
+    const targetPath = route === 'home' ? '/' : `/${route}`;
+    try {
+      window.history.pushState({ route }, '', targetPath);
+    } catch {
+      // fallback if restricted
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  // Listen to browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentRoute(getInitialRoute());
+    };
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
+  }, []);
 
   const activeTask = tasks.find((t) => t.id === activeTaskId) || null;
 
@@ -111,7 +148,7 @@ export function App() {
         return {
           totalCompletedPomodoros: prevStats.totalCompletedPomodoros + 1,
           totalFocusMinutes: prevStats.totalFocusMinutes + durationMinutes,
-          history: [newRecord, ...prevStats.history].slice(0, 100), // retain last 100 sessions
+          history: [newRecord, ...prevStats.history].slice(0, 100),
           currentStreak: newStreak,
           bestStreak: newBestStreak,
           lastActiveDate: todayStr,
@@ -259,7 +296,7 @@ export function App() {
   return (
     <div className="min-h-screen flex flex-col justify-between selection:bg-focus/20 selection:text-focus transition-colors duration-200">
       <div>
-        {/* Header */}
+        {/* Universal Header */}
         <Header
           soundEnabled={soundSettings.soundEnabled}
           theme={theme}
@@ -267,71 +304,91 @@ export function App() {
           onSetTheme={setTheme}
           onOpenSettings={() => setIsSettingsOpen(true)}
           onOpenShortcuts={() => setIsShortcutsOpen(true)}
+          onNavigateHome={() => navigateTo('home')}
         />
 
-        {/* Main Content Area */}
-        <main className="w-full max-w-4xl mx-auto px-4 py-2">
-          {/* Main Navigation Tabs */}
-          <Navigation
-            currentTab={currentTab}
-            onSelectTab={setCurrentTab}
-            activeTaskCount={activeTaskCount}
-            isTimerRunning={status === 'running'}
+        {/* Dynamic Route View */}
+        {currentRoute === 'privacy' && (
+          <PrivacyPage onNavigateHome={() => navigateTo('home')} />
+        )}
+
+        {currentRoute === 'sitemap' && (
+          <SitemapPage
+            onNavigateHome={() => navigateTo('home')}
+            onNavigatePrivacy={() => navigateTo('privacy')}
           />
+        )}
 
-          {/* Tab Views */}
-          <div className="transition-all duration-300">
-            {currentTab === 'timer' && (
-              <TimerDisplay
-                mode={mode}
-                status={status}
-                timeLeft={timeLeft}
-                progress={progress}
-                completedInCycle={completedInCycle}
-                sessionsBeforeLongBreak={sessionsBeforeLongBreak}
-                activeTask={activeTask}
-                soundEnabled={soundSettings.soundEnabled}
-                onSwitchMode={switchMode}
-                onToggleStartPause={toggleStartPause}
-                onReset={resetTimer}
-                onSkip={skipSession}
-                onSelectTasksTab={() => setCurrentTab('tasks')}
-                onToggleTaskComplete={handleToggleCompleteTask}
+        {currentRoute === 'home' && (
+          <>
+            {/* Main Content Area */}
+            <main className="w-full max-w-4xl mx-auto px-4 py-2">
+              {/* Main Navigation Tabs */}
+              <Navigation
+                currentTab={currentTab}
+                onSelectTab={setCurrentTab}
+                activeTaskCount={activeTaskCount}
+                isTimerRunning={status === 'running'}
               />
-            )}
 
-            {currentTab === 'tasks' && (
-              <TaskList
-                tasks={tasks}
-                activeTaskId={activeTaskId}
-                onAddTask={handleAddTask}
-                onSetActiveTask={handleSetActiveTask}
-                onToggleCompleteTask={handleToggleCompleteTask}
-                onDeleteTask={handleDeleteTask}
-                onUpdateTaskTitle={handleUpdateTaskTitle}
-                onClearCompletedTasks={handleClearCompletedTasks}
-              />
-            )}
+              {/* Tab Views */}
+              <div className="transition-all duration-300">
+                {currentTab === 'timer' && (
+                  <TimerDisplay
+                    mode={mode}
+                    status={status}
+                    timeLeft={timeLeft}
+                    progress={progress}
+                    completedInCycle={completedInCycle}
+                    sessionsBeforeLongBreak={sessionsBeforeLongBreak}
+                    activeTask={activeTask}
+                    soundEnabled={soundSettings.soundEnabled}
+                    onSwitchMode={switchMode}
+                    onToggleStartPause={toggleStartPause}
+                    onReset={resetTimer}
+                    onSkip={skipSession}
+                    onSelectTasksTab={() => setCurrentTab('tasks')}
+                    onToggleTaskComplete={handleToggleCompleteTask}
+                  />
+                )}
 
-            {currentTab === 'stats' && (
-              <Statistics
-                stats={stats}
-                dailyGoalSettings={dailyGoalSettings}
-                onClearHistory={handleClearHistory}
-              />
-            )}
-          </div>
-        </main>
+                {currentTab === 'tasks' && (
+                  <TaskList
+                    tasks={tasks}
+                    activeTaskId={activeTaskId}
+                    onAddTask={handleAddTask}
+                    onSetActiveTask={handleSetActiveTask}
+                    onToggleCompleteTask={handleToggleCompleteTask}
+                    onDeleteTask={handleDeleteTask}
+                    onUpdateTaskTitle={handleUpdateTaskTitle}
+                    onClearCompletedTasks={handleClearCompletedTasks}
+                  />
+                )}
+
+                {currentTab === 'stats' && (
+                  <Statistics
+                    stats={stats}
+                    dailyGoalSettings={dailyGoalSettings}
+                    onClearHistory={handleClearHistory}
+                  />
+                )}
+              </div>
+            </main>
+
+            {/* Educational Guide & SEO Section */}
+            <GuideSection />
+
+            {/* FAQ Accordion Section */}
+            <FaqAccordion />
+          </>
+        )}
       </div>
 
-      {/* Educational Guide & SEO Section */}
-      <GuideSection />
-
-      {/* FAQ Accordion Section */}
-      <FaqAccordion />
-
-      {/* Footer */}
-      <Footer onOpenPrivacy={() => setIsPrivacyOpen(true)} />
+      {/* Universal Footer */}
+      <Footer
+        onOpenPrivacy={() => navigateTo('privacy')}
+        onOpenSitemap={() => navigateTo('sitemap')}
+      />
 
       {/* Settings Modal */}
       <SettingsModal
@@ -353,13 +410,8 @@ export function App() {
         isOpen={isShortcutsOpen}
         onClose={() => setIsShortcutsOpen(false)}
       />
-
-      {/* Privacy Policy Modal */}
-      <PrivacyModal
-        isOpen={isPrivacyOpen}
-        onClose={() => setIsPrivacyOpen(false)}
-      />
     </div>
   );
 }
+
 export default App;

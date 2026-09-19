@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sun, Moon, Laptop } from 'lucide-react';
+import { Sun, Moon } from 'lucide-react';
 import { ThemeMode } from '../../types';
 
 interface ThemeToggleProps {
@@ -8,34 +8,29 @@ interface ThemeToggleProps {
 }
 
 export const ThemeToggle: React.FC<ThemeToggleProps> = ({ theme, onSetTheme }) => {
-  const options: { mode: ThemeMode; icon: React.FC<{ className?: string }>; title: string }[] = [
-    { mode: 'light', icon: Sun, title: 'Light mode' },
-    { mode: 'dark', icon: Moon, title: 'Dark mode' },
-    { mode: 'system', icon: Laptop, title: 'System theme' },
-  ];
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  const toggleTheme = () => {
+    onSetTheme(isDark ? 'light' : 'dark');
+  };
 
   return (
-    <div className="flex items-center bg-slate-200/70 dark:bg-surface-850 p-1 rounded-xl border border-slate-300/50 dark:border-surface-700/60 shadow-inner">
-      {options.map((opt) => {
-        const Icon = opt.icon;
-        const isActive = theme === opt.mode;
-        return (
-          <button
-            key={opt.mode}
-            type="button"
-            onClick={() => onSetTheme(opt.mode)}
-            title={opt.title}
-            aria-label={opt.title}
-            className={`p-1.5 rounded-lg transition-all ${
-              isActive
-                ? 'bg-white dark:bg-surface-700 text-focus shadow-sm'
-                : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
-            }`}
-          >
-            <Icon className="w-3.5 h-3.5" />
-          </button>
-        );
-      })}
-    </div>
+    <button
+      type="button"
+      onClick={toggleTheme}
+      title={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+      aria-label={isDark ? 'Switch to Light mode' : 'Switch to Dark mode'}
+      className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-surface-800 transition-all duration-200 active:scale-95 flex items-center justify-center"
+    >
+      {isDark ? (
+        <Sun className="w-5 h-5 text-amber-400 hover:rotate-45 transition-transform duration-300" />
+      ) : (
+        <Moon className="w-5 h-5 text-slate-700 hover:-rotate-12 transition-transform duration-300" />
+      )}
+    </button>
   );
 };
